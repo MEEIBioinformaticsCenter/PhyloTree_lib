@@ -40,12 +40,6 @@ def main():
 	print("")
 	
 	
-	#dic_nodes=PhyloTree_lib.get_dic_objects_from_excel("PhyloTree_17.xlsx")
-
-	#print(dir(PhyloTree_lib))
-	#print(PhyloTree_lib.get_root(dic_nodes))
-
-
 ##############
 
 if __name__ == "__main__":
