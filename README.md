@@ -1,6 +1,12 @@
 # PhyloTree_lib
 Phython library to manipulate excel files from [PhyloTree.org](http://www.phylotree.org/)
 
+## Dependences
+Tested with Phyton V2.7
+
+[xlrd](https://pypi.python.org/pypi/xlrd)
+
+
 ## How to use it
 This library allows you to open an excel file containning the whole PhyloTree and ask questions:
 
