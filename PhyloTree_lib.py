@@ -39,8 +39,42 @@ class Node(object):
 
 class PhyloTree:
 	haplogroup_dic={}
+	__DEFAULT_CHANGE_TABLE={'A':'G','G':'A','C':'T','T':'C'}
+
 	def __init__(self, excel_file):
 		self.haplogroup_dic=self.__get_dic_objects_from_excel(excel_file)
+
+	def __remove_leters(self, snp):
+		to_return=""
+		letters=[]
+		admirations=0
+		numbers=["0","1","2","3","4","5","6","7","8","9"]
+		for letter in snp:
+			if letter in numbers:
+				to_return+=letter
+			elif letter == " ":
+				if to_return[-1]!="-":
+					to_return+="-"
+					if admirations==2:
+						to_return="@"+to_return
+					admirations=0
+			elif letter == "!":
+				admirations+=1
+			else:
+				letters.append(letter)
+
+		if admirations==2:
+			return("@"+to_return)
+		elif "@" not in to_return:
+			return(to_return)
+		else:
+			print("I DON'T KNOW WHAT TO DO!")
+			print(snp)
+			print(to_return)
+			exit(1) 
+			
+
+
 	
 	# Excel file from PhyloTree as input and the dictionary of objects as output
 	def __get_dic_objects_from_excel(self,excel_file):
@@ -70,21 +104,22 @@ class PhyloTree:
 					level=col_num+1
 					publications=sheet.cell(row_num,count_columns-2).value+" "+sheet.cell(row_num,count_columns-1).value.strip()
 					aux_node=Node(name,level,snps,publications)
-		
+					
+					if aux_node.snps=='':
+						aux_node.level-=1	
+	
 					if last_Node_name!="":
 						if nodes[last_Node_name].level<aux_node.level: #Previous is closer to the root, so is the father
 							if aux_node.snps=='':
 								aux_node.snps=aux_node.haplogroup
-								aux_node.level-=1 ## Adjusting the leven when is not a haplogroup
-								aux_node.haplogroup=last_Node_name+"-"+aux_node.snps.strip()
+								aux_node.haplogroup=last_Node_name+"-"+self.__remove_leters(aux_node.snps.strip())
 							
 							aux_node.parent=last_Node_name
 							nodes[last_Node_name].childs.append(aux_node.haplogroup)
 						elif nodes[last_Node_name].level==aux_node.level: #Same level than previous, so brothers
 							if aux_node.snps=='':
 								aux_node.snps=aux_node.haplogroup
-								aux_node.level-=1 ## Adjusting the leven when is not a haplogroup
-								aux_node.haplogroup=nodes[last_Node_name].parent+"-"+aux_node.snps.strip()
+								aux_node.haplogroup=nodes[last_Node_name].parent+"-"+self.__remove_leters(aux_node.snps.strip())
 							aux_node.parent=nodes[last_Node_name].parent
 							nodes[nodes[last_Node_name].parent].childs.append(aux_node.haplogroup)
 						else: #current closer to the root, so find a brother
@@ -93,8 +128,7 @@ class PhyloTree:
 								aux=nodes[aux].parent
 							if aux_node.snps=='':
 								aux_node.snps=aux_node.haplogroup
-								aux_node.level-=1 ## Adjusting the leven when is not a haplogroup
-								aux_node.haplogroup=nodes[aux].parent+"-"+aux_node.snps.strip()
+								aux_node.haplogroup=nodes[aux].parent+"-"+self.__remove_leters(aux_node.snps.strip())
 							aux_node.parent=nodes[aux].parent
 							nodes[nodes[aux].parent].childs.append(aux_node.haplogroup)
 					else:
