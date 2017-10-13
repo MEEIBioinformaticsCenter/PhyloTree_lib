@@ -47,7 +47,7 @@ class PhyloTree:
 	def __remove_leters(self, snp):
 		to_return=""
 		letters=[]
-		admirations=0
+		#admirations=0
 		numbers=["0","1","2","3","4","5","6","7","8","9"]
 		for letter in snp:
 			if letter in numbers:
@@ -55,23 +55,28 @@ class PhyloTree:
 			elif letter == " ":
 				if to_return[-1]!="-":
 					to_return+="-"
-					if admirations==2:
-						to_return="@"+to_return
-					admirations=0
-			elif letter == "!":
-				admirations+=1
+					#if admirations==2:
+					#	to_return="@"+to_return
+					#admirations=0
+			#elif letter == "!":
+			#	admirations+=1
 			else:
 				letters.append(letter)
 
-		if admirations==2:
-			return("@"+to_return)
-		elif "@" not in to_return:
-			return(to_return)
-		else:
-			print("I DON'T KNOW WHAT TO DO!")
-			print(snp)
-			print(to_return)
-			exit(1) 
+		#if admirations==2:
+		#	print("--------")
+		#	print("@"+to_return)
+		#	print("--------")
+		#	return("@"+to_return)
+			
+		#elif "@" not in to_return:
+		return(to_return)
+			
+		#else:
+		#	print("I DON'T KNOW WHAT TO DO!")
+		#	print(snp)
+		#	print(to_return)
+		#	exit(1) 
 			
 
 
@@ -145,7 +150,28 @@ class PhyloTree:
 			row_num+=1
 	
 		return nodes
-	
+
+
+	# Input is an array of haplogroups, returns the closest to the root, if same level, father of the first one
+	def get_highest_leaf(self,array_haplogroups):
+		array_haplogroups=list(set(array_haplogroups))
+
+		if len(array_haplogroups)==1:
+			return(array_haplogroups[0])
+		
+		dic_levels={}
+		for haplogroup in array_haplogroups:
+			try:
+				dic_levels[self.haplogroup_dic[haplogroup].level].append(haplogroup)
+			except KeyError:
+				dic_levels[self.haplogroup_dic[haplogroup].level]=[haplogroup]
+				pass
+		if len(dic_levels[min(dic_levels.keys())])==1:
+
+			return(dic_levels[min(dic_levels.keys())][0])
+		else:
+			return(str(self.haplogroup_dic[dic_levels[min(dic_levels.keys())][0]].parent))
+			
 	
 	# Input is a haplogroup and it returns an array of haplogroups that are closer to the root
 	def get_all_haplogroups_leaf_to_root(self,target_haplogroup):
